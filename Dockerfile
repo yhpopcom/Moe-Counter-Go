@@ -2,7 +2,7 @@
 FROM golang:1.21-alpine AS builder
 WORKDIR /app
 COPY . .
-RUN CGO_ENABLED=0 go build -ldflags="-w -s" -o moe-counter
+RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-w -s" -o moe-counter
 
 # 运行阶段
 FROM alpine:latest
