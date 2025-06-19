@@ -104,11 +104,12 @@ func CombineImages(count uint, publicFS fs.FS, themeName string, length int, sca
 		}
 	}
 
-	// 根据对齐方式计算起始位置
+	// 根据对齐方式计算起始位置（使用switch优化）
 	startX := 0
-	if align == "center" {
+	switch align {
+	case "center":
 		startX = (totalWidth - (totalWidth - offset*(len(chars)-1))) / 2
-	} else if align == "right" {
+	case "right":
 		startX = totalWidth - (totalWidth - offset*(len(chars)-1))
 	}
 

@@ -40,8 +40,8 @@ func CounterHandler(publicFS fs.FS) gin.HandlerFunc {
 				req.Theme = "original-new" // 默认值
 			} else {
 				// 随机选择一个主题
-				rand.Seed(time.Now().UnixNano())
-				req.Theme = themes[rand.Intn(len(themes))]
+				r := rand.New(rand.NewSource(time.Now().UnixNano()))
+				req.Theme = themes[r.Intn(len(themes))]
 			}
 		}
 
