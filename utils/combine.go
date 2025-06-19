@@ -36,8 +36,9 @@ func CombineImages(count uint, publicFS fs.FS, themeName string, length int, sca
 	}
 	// 暗黑模式处理已迁移到前端，此处不再使用该参数
 
-	// 将计数转换为数字字符串并补齐位数
+	// 将计数转换为数字字符串并处理位数
 	countStr := strconv.FormatUint(uint64(count), 10)
+	// 长度不足时左侧补零，超过时保留实际长度
 	if len(countStr) < length {
 		countStr = strings.Repeat("0", length-len(countStr)) + countStr
 	}
@@ -65,7 +66,7 @@ func CombineImages(count uint, publicFS fs.FS, themeName string, length int, sca
 	}
 
 	// 加载特殊图片
-	specialFiles := []string{"_start", "_end"}
+	specialFiles := []string{"start", "end"}
 	for _, file := range specialFiles {
 		imgPath := themePath + "/" + file + ext
 		if _, err := fs.Stat(publicFS, imgPath); err == nil {
@@ -79,12 +80,12 @@ func CombineImages(count uint, publicFS fs.FS, themeName string, length int, sca
 
 	// 构建字符序列
 	chars := []string{}
-	if _, exists := imageMap["_start"]; exists {
-		chars = append(chars, "_start")
+	if _, exists := imageMap["start"]; exists {
+		chars = append(chars, "start")
 	}
 	chars = append(chars, strings.Split(countStr, "")...)
-	if _, exists := imageMap["_end"]; exists {
-		chars = append(chars, "_end")
+	if _, exists := imageMap["end"]; exists {
+		chars = append(chars, "end")
 	}
 
 	// 计算总宽度和最大高度
