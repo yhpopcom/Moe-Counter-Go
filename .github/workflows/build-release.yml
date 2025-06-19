@@ -121,21 +121,23 @@ jobs:
           ls -R artifacts
           
           cd artifacts
-          for dir in *; do
-            if [ -d "$dir" ]; then
-              echo "Processing directory: $dir"
-              # 进入子目录
-              pushd "$dir" > /dev/null
-              # 压缩子目录内的文件
+          # 处理所有文件和目录
+          for item in *; do
+            if [ -d "$item" ]; then
+              echo "Processing directory: $item"
+              pushd "$item" > /dev/null
               for file in *; do
-                echo "Compressing: $file"
-                zip "../${dir}.zip" "$file"
+                echo "Compressing: $file into ../${item}.zip"
+                zip -j "../${item}.zip" "$file"
               done
               popd > /dev/null
-              # 删除空目录
-              rm -rf "$dir"
-            else
-              echo "Warning: $dir is not a directory, skipping"
+              rm -rf "$item"
+            elif [ -f "$item" ]; then
+              echo "Processing file: $item"
+              # 直接压缩文件
+              filename=$(basename "$item")
+              zip "${filename%.*}.zip" "$item"
+              rm -f "$item"
             fi
           done
           cd ..
