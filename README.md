@@ -173,22 +173,32 @@ docker run -p 8088:8088 moecounter
 - Go版本：1.22
 
 **权限配置**：
-GitHub Actions 使用自动生成的 `GITHUB_TOKEN` 进行发布操作：
-1. 默认权限：工作流自动拥有创建 Release 的权限
-2. 验证权限：
-   - 访问仓库的 `Settings > Actions > General`
-   - 确保 `Workflow permissions` 中 `Read and write permissions` 已启用
-3. 如需更高权限：
+工作流需要以下权限：
+1. **默认权限**：
+   - `contents: read` (检出代码)
+   - `actions: read/write` (执行工作流)
+   - `packages: read` (访问构建产物)
+   - `contents: write` (创建Release和上传资产)
+
+2. **验证权限设置**：
+   - 访问仓库 `Settings > Actions > General`
+   - 在 `Workflow permissions` 部分：
+     - 选择 `Read and write permissions`
+     - 勾选 `Allow GitHub Actions to create and approve pull requests` (非必需)
+
+3. **权限不足解决方案**：
+   如果遇到权限错误：
    ```bash
-   # 创建Personal Access Token(PAT)
-   # 1. 访问 GitHub Settings > Developer settings > Personal access tokens
-   # 2. 生成新Token，勾选"repo"权限范围
-   # 3. 在仓库Settings > Secrets中新增secret：
-   #    Name: RELEASE_TOKEN
-   #    Value: [粘贴生成的Token]
-   ```
-   然后在工作流中替换：
-   ```yaml
+   # 1. 创建Personal Access Token(PAT)
+   #    - 访问 GitHub Settings > Developer settings > Personal access tokens
+   #    - 生成新Token，权限范围勾选"repo"
+   #    - 复制生成的Token值
+   
+   # 2. 在仓库Secrets中添加：
+   #    - Name: RELEASE_TOKEN
+   #    - Value: [粘贴生成的Token]
+   
+   # 3. 在工作流中替换Token：
    env:
      GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
    ```
