@@ -162,6 +162,11 @@ docker run -p 8088:8088 moecounter
 ## 感谢
 本项目部分资源基于 [journey-ad/Moe-Counter](https://github.com/journey-ad/Moe-Counter) 开发
 
-
 ## Star History
-[![Star History Chart](https://api.star-history.com/svg?repos=skyle1995/Moe-Counter-Go&type=Date)](https://www.star-history.com/#skyle1995/Moe-Counter-Go&Date)
+<a href="https://star-history.com/?repos=skyle1995/Moe-Counter-Go&type=Date#skyle1995/Moe-Counter-Go&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=skyle1995/Moe-Counter-Go&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=skyle1995/Moe-Counter-Go&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=skyle1995/Moe-Counter-Go&type=Date" />
+ </picture>
+</a>
