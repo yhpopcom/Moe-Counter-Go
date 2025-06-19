@@ -135,7 +135,7 @@ http://localhost:8088/counter?name=test&num=12345
 ### 添加新主题
 1. 在`public/assets/theme`下创建新文件夹
 2. 添加0-9的数字图片（支持.png/.gif）
-3. 可选：添加`_start`（前缀）和`_end`（后缀）图片
+3. 可选：添加`start`（前缀）和`end`（后缀）图片
 4. 重启服务即可使用新主题
 
 ### 构建与部署
