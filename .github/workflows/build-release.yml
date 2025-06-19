@@ -107,14 +107,34 @@ jobs:
     - name: Compress binaries
       run: |
         if [ -d "artifacts" ]; then
+          echo "Artifacts directory structure:"
+          ls -R artifacts
+          
           cd artifacts
-          for file in *; do
-            zip "${file}.zip" "$file"
+          for dir in *; do
+            if [ -d "$dir" ]; then
+              echo "Processing directory: $dir"
+              # 进入子目录
+              pushd "$dir" > /dev/null
+              # 压缩子目录内的文件
+              for file in *; do
+                echo "Compressing: $file"
+                zip "../${dir}.zip" "$file"
+              done
+              popd > /dev/null
+              # 删除空目录
+              rm -rf "$dir"
+            else
+              echo "Warning: $dir is not a directory, skipping"
+            fi
           done
           cd ..
         else
           echo "Warning: artifacts directory not found. Skipping compression."
         fi
+        
+        echo "Generated ZIP files:"
+        ls -lh artifacts/*.zip || true
       shell: bash
       continue-on-error: true
 
