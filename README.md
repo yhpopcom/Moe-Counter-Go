@@ -159,6 +159,9 @@ docker run -p 8088:8088 moecounter
 ## 预览
 ![预览图片](public/assets/img/Preview.jpg)
 
+## 感谢
+本项目部分资源基于 [journey-ad/Moe-Counter](https://github.com/journey-ad/Moe-Counter) 开发
+
 
 ## Star History
 [![Star History Chart](https://api.star-history.com/svg?repos=skyle1995/Moe-Counter-Go&type=Date)](https://www.star-history.com/#skyle1995/Moe-Counter-Go&Date)
