@@ -15,7 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [amd64, arm64]
+        include:
+          - {arch: amd64, suffix: amd64}
+          - {arch: arm64, suffix: arm64}
+          - {arch: ppc64le, suffix: ppc64le}
+          - {arch: s390x, suffix: s390x}
+          - {arch: 386, suffix: 386}
+          - {arch: arm, suffix: armv6, goarm: 6}
+          - {arch: arm, suffix: armv7, goarm: 7}
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -27,23 +34,26 @@ jobs:
 
     - name: Build
       run: |
-        OUTPUT="moeCounter-linux-${{ matrix.arch }}"
+        OUTPUT="moeCounter-linux-${{ matrix.suffix }}"
+        if [ -n "${{ matrix.goarm }}" ]; then
+          export GOARM=${{ matrix.goarm }}
+        fi
         GOOS=linux GOARCH=${{ matrix.arch }} go build -o $OUTPUT ./main.go
-        mv $OUTPUT linux-${{ matrix.arch }}
+        mv $OUTPUT linux-${{ matrix.suffix }}
       continue-on-error: true
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: linux-${{ matrix.arch }}
-        path: linux-${{ matrix.arch }}
+        name: linux-${{ matrix.suffix }}
+        path: linux-${{ matrix.suffix }}
         if-no-files-found: warn
 
   build_macos:
     runs-on: macos-latest
     strategy:
       matrix:
-        arch: [arm64]
+        arch: [arm64, amd64]
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -71,7 +81,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        arch: [amd64]
+        arch: [amd64, arm64, 386]
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
