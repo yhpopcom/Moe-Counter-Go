@@ -174,34 +174,42 @@ docker run -p 8088:8088 moecounter
 
 **权限配置**：
 工作流需要以下权限：
-1. **默认权限**：
-   - `contents: read` (检出代码)
-   - `actions: read/write` (执行工作流)
-   - `packages: read` (访问构建产物)
-   - `contents: write` (创建Release和上传资产)
+1. **默认设置**：
+   - GitHub 自动为每个工作流运行生成 `GITHUB_TOKEN`
+   - 无需手动创建或配置
+   - 权限范围：当前仓库的读写权限
 
-2. **验证权限设置**：
+2. **权限验证与设置**：
    - 访问仓库 `Settings > Actions > General`
    - 在 `Workflow permissions` 部分：
      - 选择 `Read and write permissions`
-     - 勾选 `Allow GitHub Actions to create and approve pull requests` (非必需)
+     - 确保 `Allow GitHub Actions to create and approve pull requests` 已勾选
+   - 保存设置
 
 3. **权限不足解决方案**：
-   如果遇到权限错误：
+   如果遇到 403 权限错误：
    ```bash
-   # 1. 创建Personal Access Token(PAT)
-   #    - 访问 GitHub Settings > Developer settings > Personal access tokens
-   #    - 生成新Token，权限范围勾选"repo"
+   # 1. 创建更高权限的Personal Access Token(PAT)：
+   #    - 访问 https://github.com/settings/tokens
+   #    - 点击 "Generate new token"
+   #    - 权限范围勾选 "repo" (完整仓库控制)
    #    - 复制生成的Token值
    
    # 2. 在仓库Secrets中添加：
+   #    - 访问仓库 Settings > Secrets > Actions
+   #    - 点击 "New repository secret"
    #    - Name: RELEASE_TOKEN
-   #    - Value: [粘贴生成的Token]
+   #    - Secret: [粘贴生成的Token]
    
    # 3. 在工作流中替换Token：
    env:
      GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
    ```
+
+4. **工作流权限检查**：
+   - 每次工作流运行时，会自动使用 `GITHUB_TOKEN`
+   - 权限级别可在工作流日志的 "Set up job" 部分查看
+   - 如果看到 `Permission: write` 表示有足够权限
 
 ## 依赖
 - Gin Web框架

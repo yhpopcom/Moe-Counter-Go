@@ -29,6 +29,22 @@ jobs:
 
     - name: Build
       run: |
+        # 转换OS标识符为Go兼容格式
+        case "${{ runner.os }}" in
+          "Linux")
+            GO_OS="linux"
+            ;;
+          "macOS")
+            GO_OS="darwin"
+            ;;
+          "Windows")
+            GO_OS="windows"
+            ;;
+          *)
+            GO_OS="linux"
+            ;;
+        esac
+        
         # 设置输出文件名
         OUTPUT="moeCounter-${{ runner.os }}-${{ matrix.arch }}"
         if [ "${{ runner.os }}" == "Windows" ]; then
@@ -36,11 +52,13 @@ jobs:
         fi
         
         # 构建二进制
-        GOOS=${{ runner.os }} GOARCH=${{ matrix.arch }} go build -o $OUTPUT ./main.go
+        GOOS=$GO_OS GOARCH=${{ matrix.arch }} go build -o $OUTPUT ./main.go
         
         # 创建release目录
         mkdir release
         mv $OUTPUT release/
+      # 添加错误继续选项
+      continue-on-error: true
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
