@@ -38,10 +38,14 @@ jobs:
         # 为 ARMv6/v7 设置 GOARM
         if [ "${{ matrix.arch }}" == "arm" ]; then
           export GOARM=${{ matrix.goarm }}
+          # 设置后缀
+          SUFFIX="-v${{ matrix.goarm }}"
+        else
+          SUFFIX=""
         fi
         
         GOOS=linux GOARCH=${{ matrix.arch }} go build -o $OUTPUT ./main.go
-        mv $OUTPUT linux-${{ matrix.arch }}${{ (matrix.arch == 'arm') ? format('-v{0}', matrix.goarm) : '' }}
+        mv $OUTPUT "linux-${{ matrix.arch }}$SUFFIX"
       continue-on-error: true
 
     - name: Upload Artifact
