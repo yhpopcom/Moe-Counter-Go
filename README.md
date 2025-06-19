@@ -157,17 +157,16 @@ docker run -p 8088:8088 moecounter
 
 **使用步骤**：
 1. 将项目代码推送到GitHub仓库
-2. 在项目根目录创建`.github/workflows/release.yml`文件（内容已提供）
-3. 创建版本标签并推送到仓库：
+2. 创建版本标签并推送到仓库：
    ```bash
    git tag v1.0.0  # 替换为你的版本号
    git push origin v1.0.0
    ```
-4. 在GitHub仓库的"Releases"页面查看自动生成的发布版本
+3. 在GitHub仓库的"Releases"页面查看自动生成的发布版本
 
 **工作流说明**：
 - 触发条件：推送`v*.*.*`格式的标签
-- 构建环境：多平台支持（Linux/amd64, Linux/arm64, macOS/arm64, Windows/amd64）
+- 构建环境：多平台支持（Linux / macOS / Windows）
 - 自动生成多平台二进制文件并打包
 - 使用GitHub Token自动创建Release并上传所有构建产物
 - Go版本：1.22
