@@ -15,7 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [amd64, arm64]
+        include:
+          - arch: 386
+          - arch: amd64
+          - arch: arm
+            goarm: 6
+          - arch: arm
+            goarm: 7
+          - arch: arm64
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -28,8 +35,13 @@ jobs:
     - name: Build
       run: |
         OUTPUT="moeCounter-linux-${{ matrix.arch }}"
+        # 为 ARMv6/v7 设置 GOARM
+        if [ "${{ matrix.arch }}" == "arm" ]; then
+          export GOARM=${{ matrix.goarm }}
+        fi
+        
         GOOS=linux GOARCH=${{ matrix.arch }} go build -o $OUTPUT ./main.go
-        mv $OUTPUT linux-${{ matrix.arch }}
+        mv $OUTPUT linux-${{ matrix.arch }}${{ (matrix.arch == 'arm') ? format('-v{0}', matrix.goarm) : '' }}
       continue-on-error: true
 
     - name: Upload Artifact
@@ -43,7 +55,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        arch: [arm64]
+        arch: [amd64, arm64]
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -71,7 +83,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        arch: [amd64]
+        arch: [amd64, arm64]
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -84,6 +96,8 @@ jobs:
     - name: Build
       run: |
         $output = "windows-${{ matrix.arch }}.exe"
+        $env:GOOS = "windows"
+        $env:GOARCH = "${{ matrix.arch }}"
         go build -o $output ./main.go
       continue-on-error: true
 
@@ -102,7 +116,17 @@ jobs:
       id: check_artifacts
       run: |
         # 检查所有需要的artifact是否都存在
-        required_artifacts=("linux-amd64" "linux-arm64" "macos-arm64" "windows-amd64")
+        # 列出所有预期的 artifact
+        required_artifacts=(
+          "linux-386"
+          "linux-amd64"
+          "linux-arm"
+          "linux-arm64"
+          "macos-amd64"
+          "macos-arm64"
+          "windows-amd64"
+          "windows-arm64"
+        )
         missing_artifacts=()
         
         for artifact in "${required_artifacts[@]}"; do
