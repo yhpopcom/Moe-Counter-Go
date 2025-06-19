@@ -151,6 +151,48 @@ docker build -t moecounter .
 docker run -p 8088:8088 moecounter
 ```
 
+## GitHub Actions自动发布
+
+我们提供了GitHub Actions自动化脚本，用于在推送标签时自动构建并发布Release。
+
+**使用步骤**：
+1. 将项目代码推送到GitHub仓库
+2. 在项目根目录创建`.github/workflows/release.yml`文件（内容已提供）
+3. 创建版本标签并推送到仓库：
+   ```bash
+   git tag v1.0.0  # 替换为你的版本号
+   git push origin v1.0.0
+   ```
+4. 在GitHub仓库的"Releases"页面查看自动生成的发布版本
+
+**工作流说明**：
+- 触发条件：推送`v*.*.*`格式的标签
+- 构建环境：多平台支持（Linux/amd64, Linux/arm64, macOS/arm64, Windows/amd64）
+- 自动生成多平台二进制文件并打包
+- 使用GitHub Token自动创建Release并上传所有构建产物
+- Go版本：1.22
+
+**权限配置**：
+GitHub Actions 使用自动生成的 `GITHUB_TOKEN` 进行发布操作：
+1. 默认权限：工作流自动拥有创建 Release 的权限
+2. 验证权限：
+   - 访问仓库的 `Settings > Actions > General`
+   - 确保 `Workflow permissions` 中 `Read and write permissions` 已启用
+3. 如需更高权限：
+   ```bash
+   # 创建Personal Access Token(PAT)
+   # 1. 访问 GitHub Settings > Developer settings > Personal access tokens
+   # 2. 生成新Token，勾选"repo"权限范围
+   # 3. 在仓库Settings > Secrets中新增secret：
+   #    Name: RELEASE_TOKEN
+   #    Value: [粘贴生成的Token]
+   ```
+   然后在工作流中替换：
+   ```yaml
+   env:
+     GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+   ```
+
 ## 依赖
 - Gin Web框架
 - GORM ORM库

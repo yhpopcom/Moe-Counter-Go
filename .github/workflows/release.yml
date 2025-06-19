@@ -6,8 +6,18 @@ on:
       - 'v*.*.*'  # 匹配语义化版本标签 (v1.0.0格式)
 
 jobs:
-  build-and-release:
-    runs-on: ubuntu-latest
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        arch: [amd64, arm64]
+        exclude:
+          # 排除不常见的组合
+          - os: windows-latest
+            arch: arm64
+          - os: macos-latest
+            arch: amd64
+    runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -15,17 +25,64 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.22'  # 根据项目需要调整Go版本
+        go-version: '1.22'
 
     - name: Build
       run: |
-        go build -o moeCounter ./main.go
+        # 设置输出文件名
+        OUTPUT="moeCounter-${{ runner.os }}-${{ matrix.arch }}"
+        if [ "${{ runner.os }}" == "Windows" ]; then
+          OUTPUT="$OUTPUT.exe"
+        fi
+        
+        # 构建二进制
+        GOOS=${{ runner.os }} GOARCH=${{ matrix.arch }} go build -o $OUTPUT ./main.go
+        
+        # 创建release目录
         mkdir release
-        mv moeCounter release/
+        mv $OUTPUT release/
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: binaries-${{ matrix.os }}-${{ matrix.arch }}
+        path: release/
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+
+    - name: Combine artifacts
+      run: |
+        mkdir combined-release
+        find artifacts -type f -exec cp {} combined-release/ \;
 
     - name: Create Release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: release/*
+      id: create_release
+      uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BUILD_TOKEN: ${{ secrets.BUILD_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+      continue-on-error: true
+      timeout-minutes: 5
+
+    - name: Upload Release Assets
+      uses: actions/upload-release-asset@v1
+      env:
+        BUILD_TOKEN: ${{ secrets.BUILD_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./combined-release/
+        asset_name: moeCounter-binaries
+        asset_content_type: application/zip
+      continue-on-error: true
+      timeout-minutes: 5
