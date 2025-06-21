@@ -52,6 +52,8 @@ jobs:
           if [ -f "$file" ]; then
             arch_name="${file#macos-}"
             zip -j "moeCounter-macos-${arch_name}.zip" "$file"
+            # 移动压缩包到工作目录
+            mv "moeCounter-macos-${arch_name}.zip" ../
           fi
         done
         rm -rf *
@@ -62,6 +64,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.ref_name }}
-        files: artifacts/moeCounter-macos-*.zip
+        files: moeCounter-macos-*.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
