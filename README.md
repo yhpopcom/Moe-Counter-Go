@@ -145,10 +145,10 @@ http://localhost:8088/counter?name=test&num=12345
 ### 构建与部署
 ```bash
 # 编译Linux可执行文件
-GOOS=linux GOARCH=amd64 go build -o moeCounter-linux
+GOOS=linux GOARCH=amd64 go build -trimpath --ldflags="-s -w" -o moeCounter
 
 # 编译windows可执行文件
-GOOS=windows GOARCH=amd64 go build -o moeCounter-linux
+GOOS=windows GOARCH=amd64 go build -trimpath --ldflags="-s -w" -o moeCounter.exe
 ```
 
 ## GitHub Actions自动发布
