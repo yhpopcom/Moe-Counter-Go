@@ -76,6 +76,7 @@ go build -o moeCounter
 |------|------|---------|------|
 | `--port` | `-p` | 8088 | 服务监听端口 |
 | `--db` | `-d` | data.db | 数据库文件路径 |
+| `--debug` | 无 | false | 是否开启调试模式 |
 
 ## API接口
 
@@ -93,7 +94,7 @@ go build -o moeCounter
 | `align` | string | left | 对齐方式（left/center/right） |
 | `pixelate` | string | off | 像素化效果（on/off） |
 | `darkmode` | string | off | 暗黑模式（on/off） |
-| `base` | int | 0 | 基础计数值（添加到实际计数） |
+| `base` | int | 无 | 基础计数值（添加到实际计数） |
 | `num` | string | 无 | 直接指定计数值（不增加计数） |
 
 **响应**：SVG格式图片（Content-Type: image/svg+xml）

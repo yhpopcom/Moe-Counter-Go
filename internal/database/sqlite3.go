@@ -3,6 +3,7 @@ package database
 import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	gormlogger "gorm.io/gorm/logger"
 )
 
 var DB *gorm.DB
@@ -15,9 +16,17 @@ type Counter struct {
 }
 
 // 初始化数据库连接
-func InitDB(dbFile string) error {
+func InitDB(dbFile string, debug bool) error {
 	var err error
-	DB, err = gorm.Open(sqlite.Open(dbFile), &gorm.Config{})
+	config := &gorm.Config{}
+	if debug {
+		// 调试模式下显示详细日志
+		config.Logger = gormlogger.Default.LogMode(gormlogger.Info)
+	} else {
+		// 非调试模式禁用日志
+		config.Logger = gormlogger.Default.LogMode(gormlogger.Silent)
+	}
+	DB, err = gorm.Open(sqlite.Open(dbFile), config)
 	if err != nil {
 		return err
 	}

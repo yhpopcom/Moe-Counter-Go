@@ -12,12 +12,15 @@ import (
 )
 
 // 初始化路由
-func InitRouter(port int, dbFile string, publicFS embed.FS) *gin.Engine {
-	router := gin.Default()
+func InitRouter(port int, dbFile string, publicFS embed.FS, debug bool) *gin.Engine {
+	router := gin.New()
 	router.Use(gin.Recovery())
+	if debug {
+		router.Use(gin.Logger())
+	}
 
 	// 初始化数据库
-	if err := database.InitDB(dbFile); err != nil {
+	if err := database.InitDB(dbFile, debug); err != nil {
 		panic("数据库初始化失败: " + err.Error())
 	}
 
