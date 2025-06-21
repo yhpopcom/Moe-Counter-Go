@@ -176,8 +176,12 @@ jobs:
 
     - name: Upload Assets
       run: |
+        # 从环境变量获取值
+        UPLOAD_URL="${{ steps.get_release.outputs.upload_url }}"
+        RELEASE_ID="${{ steps.get_release.outputs.release_id }}"
+        
         # 检查上传URL是否有效
-        if [ -z '${steps.get_release.outputs.upload_url}' ]; then
+        if [ -z "$UPLOAD_URL" ]; then
           echo "Error: Upload URL is empty!"
           exit 1
         fi
@@ -185,10 +189,10 @@ jobs:
         for file in artifacts/*.zip; do
           [ -e "$file" ] || continue
           filename=$(basename "$file")
-          echo 'Uploading $filename to release ${steps.get_release.outputs.upload_url}'
+          echo "Uploading $filename to release $RELEASE_ID"
           
           # 显示完整URL用于调试
-          full_url='${steps.get_release.outputs.upload_url}?name=$filename'
+          full_url="$UPLOAD_URL?name=$filename"
           echo "Full URL: $full_url"
           
           # 上传文件
