@@ -48,8 +48,13 @@ jobs:
     - name: Compress binaries
       run: |
         cd artifacts
-        zip -j moeCounter-macos.zip *
-        rm -f *
+        for file in *; do
+          if [ -f "$file" ]; then
+            arch_name="${file#macos-}"
+            zip -j "moeCounter-macos-${arch_name}.zip" "$file"
+          fi
+        done
+        rm -rf *
         cd ..
       shell: bash
 
@@ -57,6 +62,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.ref_name }}
-        files: artifacts/moeCounter-macos.zip
+        files: artifacts/*.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -47,7 +47,13 @@ jobs:
     - name: Compress binaries
       run: |
         cd artifacts
-        zip -j moeCounter-windows.zip *
+        for file in *; do
+          if [ -f "$file" ]; then
+            arch_name="${file#windows-}"
+            arch_name="${arch_name%.exe}"  # 移除 .exe 扩展名
+            zip -j "moeCounter-windows-${arch_name}.zip" "$file"
+          fi
+        done
         rm -f *
         cd ..
       shell: bash
@@ -56,6 +62,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.ref_name }}
-        files: artifacts/moeCounter-windows.zip
+        files: artifacts/*.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -58,7 +58,12 @@ jobs:
     - name: Compress binaries
       run: |
         cd artifacts
-        zip -j moeCounter-linux.zip *
+        for file in *; do
+          if [ -f "$file" ]; then
+            arch_name="${file#linux-}"
+            zip -j "moeCounter-linux-${arch_name}.zip" "$file"
+          fi
+        done
         rm -f *
         cd ..
       shell: bash
@@ -67,6 +72,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.ref_name }}
-        files: artifacts/moeCounter-linux.zip
+        files: artifacts/*.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
