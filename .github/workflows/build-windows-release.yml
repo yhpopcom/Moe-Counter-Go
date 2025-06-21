@@ -52,18 +52,29 @@ jobs:
             arch_name="${file#windows-}"
             arch_name="${arch_name%.exe}"  # 移除 .exe 扩展名
             zip -j "moeCounter-windows-${arch_name}.zip" "$file"
-            # 移动压缩包到工作目录
-            mv "moeCounter-windows-${arch_name}.zip" ../
           fi
         done
-        rm -rf *
         cd ..
+      shell: bash
+
+    - name: Check artifacts
+      run: |
+        echo "Generated artifacts:"
+        ls -l artifacts/*.zip
+        if [ ! -f artifacts/moeCounter-windows-*.zip ]; then
+          echo "Error: No zip files found!"
+          exit 1
+        fi
       shell: bash
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.ref_name }}
-        files: moeCounter-windows-*.zip
+        files: artifacts/moeCounter-windows-*.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Clean up artifacts
+      run: rm -rf artifacts
+      shell: bash

@@ -52,18 +52,29 @@ jobs:
           if [ -f "$file" ]; then
             arch_name="${file#macos-}"
             zip -j "moeCounter-macos-${arch_name}.zip" "$file"
-            # 移动压缩包到工作目录
-            mv "moeCounter-macos-${arch_name}.zip" ../
           fi
         done
-        rm -rf *
         cd ..
+      shell: bash
+
+    - name: Check artifacts
+      run: |
+        echo "Generated artifacts:"
+        ls -l artifacts/*.zip
+        if [ ! -f artifacts/moeCounter-macos-*.zip ]; then
+          echo "Error: No zip files found!"
+          exit 1
+        fi
       shell: bash
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.ref_name }}
-        files: moeCounter-macos-*.zip
+        files: artifacts/moeCounter-macos-*.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Clean up artifacts
+      run: rm -rf artifacts
+      shell: bash
