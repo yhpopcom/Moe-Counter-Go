@@ -64,7 +64,7 @@ jobs:
             zip -j "moeCounter-linux-${arch_name}.zip" "$file"
           fi
         done
-        rm -f *
+        rm -rf *
         cd ..
       shell: bash
 
