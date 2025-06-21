@@ -150,26 +150,41 @@ jobs:
       shell: bash
       continue-on-error: true
 
-    - name: Get Release Info
+    - name: Get or Create Release
       id: get_release
       uses: actions/github-script@v6
       with:
         script: |
           try {
+            // 先尝试获取现有release
             const release = await github.rest.repos.getReleaseByTag({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag: '${{ github.ref_name }}'
             });
             
-            // 设置输出变量
             core.setOutput('release_id', release.data.id);
             core.setOutput('upload_url', release.data.upload_url.replace(/\{.*$/, ''));
-            
-            console.log(`Release ID: ${release.data.id}`);
-            console.log(`Upload URL: ${release.data.upload_url.replace(/\{.*$/, '')}`);
+            console.log(`Using existing release: ${release.data.id}`);
           } catch (error) {
-            core.setFailed(`Failed to get release: ${error.message}`);
+            if (error.status === 404) {
+              // 若不存在则创建新release
+              const newRelease = await github.rest.repos.createRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag_name: '${{ github.ref_name }}',
+                name: 'Release ${{ github.ref_name }}',
+                body: 'Automatically created release',
+                draft: false,
+                prerelease: false
+              });
+              
+              core.setOutput('release_id', newRelease.data.id);
+              core.setOutput('upload_url', newRelease.data.upload_url.replace(/\{.*$/, ''));
+              console.log(`Created new release: ${newRelease.data.id}`);
+            } else {
+              core.setFailed(`Failed to get release: ${error.message}`);
+            }
           }
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
