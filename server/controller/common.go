@@ -13,7 +13,7 @@ type CounterRequest struct {
 	Offset   int     `form:"offset" default:"0"`
 	Align    string  `form:"align" default:"left"`
 	Pixelate string  `form:"pixelate" default:"off"`
-	Darkmode string  `form:"darkmode" default:"off"`
+	Darkmode string  `form:"darkmode" default:"auto"`
 	Base     int     `form:"base" default:"10"`
 	Num      string  `form:"num"`
 }

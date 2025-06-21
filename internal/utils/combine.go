@@ -119,15 +119,43 @@ func CombineImages(count uint, publicFS fs.FS, themeName string, length int, sca
 	width="` + strconv.Itoa(totalWidth) + `" height="` + strconv.Itoa(maxHeight) + `" 
 	viewBox="0 0 ` + strconv.Itoa(totalWidth) + ` ` + strconv.Itoa(maxHeight) + `">`
 
-	// 仅在黑暗模式开启时添加CSS样式
-	if darkmode == "on" {
-		svg += `
-	<style>
+	// 添加CSS样式（根据像素化和暗黑模式参数）
+	styleContent := ""
+	hasStyle := false
+
+	if pixelate == "on" || darkmode != "" {
+		styleContent += `
+	<style>`
+		hasStyle = true
+
+		if pixelate == "on" {
+			styleContent += `
 	  svg {
 		image-rendering: pixelated;
+	  }`
+		}
+
+		switch darkmode {
+		case "on":
+			styleContent += `
+	  svg {
 		filter: brightness(.6);
-	  }
+	  }`
+		case "auto":
+			styleContent += `
+	  @media (prefers-color-scheme: dark) {
+		svg {
+		  filter: brightness(.6);
+		}
+	  }`
+		}
+
+		styleContent += `
 	</style>`
+	}
+
+	if hasStyle {
+		svg += styleContent
 	}
 
 	xPos := startX
@@ -136,11 +164,6 @@ func CombineImages(count uint, publicFS fs.FS, themeName string, length int, sca
 			width := int(float64(info.Width) * scale)
 			height := int(float64(info.Height) * scale)
 			yPos := (maxHeight - height) / 2 // 垂直居中
-
-			// 添加像素化效果（占位）
-			if pixelate == "on" {
-				// 此处添加像素化处理逻辑
-			}
 
 			svg += `
 	<image x="` + strconv.Itoa(xPos) + `" y="` + strconv.Itoa(yPos) + `" 
