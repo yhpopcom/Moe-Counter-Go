@@ -80,7 +80,7 @@ go build -o moeCounter
 ## API接口
 
 ### 计数器接口
-`GET /counter?name=[计数器名称]&[参数]`
+`GET /api/counter?name=[计数器名称]&[参数]`
 
 **参数说明**：
 | 参数 | 类型 | 默认值 | 描述 |
