@@ -3,7 +3,7 @@
 <div align="center">
   <img src="public/assets/img/Preview.svg" alt="SVG预览" width="500" style="margin-bottom: 20px;">
 <p style="font-size: 18px; color: #555; margin-top: 20px; line-height: 1.6; font-weight: 500;">
-    一个用Go语言实现的轻量级计数器服务，可生成SVG格式的计数图片，支持多种主题和自定义参数。
+    基于Go语言的模块化计数器服务，采用清晰的分层架构设计（路由层/控制层/数据层），提供灵活的API接口。支持SVG计数图片生成，内置数十种主题，可通过参数定制显示效果。
   </p>
 </div>
 
@@ -11,24 +11,28 @@
 
 ```
 .
-├── database/         # 数据库模块
-│   └── sqlite3.go    # SQLite数据库操作
-├── public/           # 前端资源
-│   ├── assets/       # 静态资源
-│   │   └── theme/    # 主题资源目录
-│   └── index.html    # 首页
-├── server/           # 服务端
-│   ├── controller/   # 控制器
-│   │   ├── common.go # 公共定义
+├── cmd/               # 命令行入口
+│   ├── root.go        # 根命令
+│   └── start.go       # 启动命令
+├── internal/          # 内部包
+│   ├── database/      # 数据库模块
+│   │   └── sqlite3.go
+│   └── utils/         # 工具函数
+│       └── combine.go
+├── public/            # 前端资源
+│   ├── assets/        # 静态资源
+│   │   └── theme/     # 主题资源目录
+│   ├── favicon.ico    # 站点ico图标
+│   └── index.html     # 首页
+├── server/            # 服务端
+│   ├── controller/    # 控制器
+│   │   ├── common.go  # 公共定义
 │   │   ├── counter.go # 计数器逻辑
-│   │   └── theme.go  # 主题逻辑
-│   ├── router.go     # 路由定义
-│   └── start.go      # 服务启动
-├── utils/            # 工具函数
-│   └── combine.go    # 图片生成器
-├── go.mod            # Go模块定义
-├── go.sum            # 依赖校验
-└── main.go           # 程序入口
+│   │   └── theme.go   # 主题逻辑
+│   └── router.go      # 路由定义
+├── go.mod             # Go模块定义
+├── go.sum             # 依赖校验
+└── main.go            # 程序入口
 ```
 
 ## 运行逻辑
@@ -41,8 +45,8 @@
 2. **请求处理**：
    - `/`：返回首页HTML
    - `/assets/*`：提供静态资源
-   - `/counter`：处理计数器请求
-   - `/themes`：获取可用主题列表
+   - `/api/counter`：处理计数器请求
+   - `/api/themes`：获取可用主题列表
 
 3. **计数逻辑**：
    - 根据`name`参数获取或创建计数器
@@ -95,12 +99,12 @@ go build -o moeCounter
 **响应**：SVG格式图片（Content-Type: image/svg+xml）
 
 ### 主题列表接口
-`GET /themes`
+`GET /api/themes`
 
 **响应**：
 ```json
 {
-  "themes": ["theme1", "theme2", ...]
+  "themes": ["theme1", "theme2", "theme3"]
 }
 ```
 
@@ -145,10 +149,6 @@ GOOS=linux GOARCH=amd64 go build -o moeCounter-linux
 
 # 编译windows可执行文件
 GOOS=windows GOARCH=amd64 go build -o moeCounter-linux
-
-# 使用Docker部署
-docker build -t moecounter .
-docker run -p 8088:8088 moecounter
 ```
 
 ## GitHub Actions自动发布

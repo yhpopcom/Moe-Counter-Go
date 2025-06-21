@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>萌萌计数器！</title>
-    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    <link rel="icon" type="image/png" href="/assets/favicon.ico">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bamboo.css">
     <link rel="stylesheet/less" href="/assets/style.less">
@@ -52,19 +52,19 @@
     <p>为您的计数器设置唯一ID，替换URL中的 <code>:name</code> 即可！</p>
 
     <h5>SVG地址</h5>
-    <code id="svg_url">/counter?name=:name</code>
+    <code id="svg_url">/api/counter?name=:name</code>
 
     <h5>图片标签</h5>
-    <code id="img_url">&lt;img src="/counter?name=:name" alt=":name" /&gt;</code>
+    <code id="img_url">&lt;img src="/api/counter?name=:name" alt=":name" /&gt;</code>
 
     <h5>示例：</h5>
-    <img id="example_img" src="/counter?name=index&theme=gelbooru" alt="萌萌计数器！">
+    <img id="example_img" src="/api/counter?name=index&theme=gelbooru" alt="萌萌计数器！">
 
     <details id="themes">
         <summary id="more_theme">
             <h3>更多主题 ✨</h3>
         </summary>
-        <p>使用查询参数 <code>theme</code>，例如：<code id="theme_url">/counter?name=:name&theme=moebooru</code></p>
+        <p>使用查询参数 <code>theme</code>，例如：<code id="theme_url">/api/counter?name=:name&theme=moebooru</code></p>
         <div id="theme_list"></div>
     </details>
 
@@ -199,7 +199,7 @@
         // 加载主题列表
         async function loadThemes() {
             try {
-                const response = await fetch('/themes');
+                const response = await fetch('/api/themes');
                 const data = await response.json();
                 
                 // 更新主题选择下拉菜单
@@ -223,7 +223,7 @@
                     
                     const img = document.createElement('img');
                     img.alt = theme;
-                    img.src = `/counter?name=index&theme=${theme}&length=10&num=0123456789`;
+                    img.src = `/api/counter?name=index&theme=${theme}&length=10&num=0123456789`;
                     
                     item.appendChild(title);
                     item.appendChild(img);
@@ -237,16 +237,16 @@
         // 更新示例图片
         function updateExampleImage() {
             const exampleImg = document.getElementById('example_img');
-            exampleImg.src = `${config.site}/counter?name=index&theme=gelbooru`;
+            exampleImg.src = `${config.site}/api/counter?name=index&theme=gelbooru`;
             
             const svgUrl = document.getElementById('svg_url');
-            svgUrl.textContent = `${config.site}/counter?name=:name`;
+            svgUrl.textContent = `${config.site}/api/counter?name=:name`;
 
             const imgUrl = document.getElementById('img_url');
-            imgUrl.textContent = `<img src="${config.site}/counter?name=:name" alt=":name" />`;
+            imgUrl.textContent = `<img src="${config.site}/api/counter?name=:name" alt=":name" />`;
             
             const themeUrl = document.getElementById('theme_url');
-            themeUrl.textContent = `${config.site}/counter?name=:name&theme=moebooru`;
+            themeUrl.textContent = `${config.site}/api/counter?name=:name&theme=moebooru`;
         }
 
         // 生成预览
@@ -282,7 +282,7 @@
             // 更新预览图片（添加时间戳避免缓存）
             const resultImg = document.getElementById('result');
             const timestamp = new Date().getTime();
-            resultImg.src = `/counter?${params.toString()}&t=${timestamp}`;
+            resultImg.src = `/api/counter?${params.toString()}&t=${timestamp}`;
             resultImg.style.display = 'block';
         }
         
@@ -309,7 +309,7 @@
         if (darkmode) params.append('darkmode', darkmode);
             if (base) params.append('base', base);
             
-            const link = `${config.site}/counter?${params.toString()}`;
+            const link = `${config.site}/api/counter?${params.toString()}`;
             const linkElement = document.getElementById('linkResult');
             linkElement.innerHTML = `
                 <div style="margin-bottom: 10px;">

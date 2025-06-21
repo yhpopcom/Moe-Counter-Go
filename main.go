@@ -1,13 +1,9 @@
 package main
 
 import (
-	"embed"
-	"moeCounter/server"
+	"moeCounter/cmd"
 )
 
-//go:embed public
-var publicFS embed.FS
-
 func main() {
-	server.StartWebServer(publicFS)
+	cmd.Execute()
 }
