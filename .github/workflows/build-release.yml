@@ -150,57 +150,53 @@ jobs:
       shell: bash
       continue-on-error: true
 
-    - name: Get Release Info and Upload Assets
+    - name: Get Release Info
       id: get_release
       uses: actions/github-script@v6
       with:
         script: |
-          const fs = require('fs');
-          const path = require('path');
-          const core = require('@actions/core');
-
           try {
-            // 获取release
             const release = await github.rest.repos.getReleaseByTag({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag: '${{ github.ref_name }}'
             });
             
-            const releaseId = release.data.id;
-            const uploadUrl = release.data.upload_url.replace(/\{.*$/, '');
-
-            console.log(`Release ID: ${releaseId}`);
-            console.log(`Upload URL: ${uploadUrl}`);
-
-            // 上传artifacts目录下的所有zip文件
-            const artifactsDir = path.join(process.env.GITHUB_WORKSPACE, 'artifacts');
-            const files = fs.readdirSync(artifactsDir);
-            const zipFiles = files.filter(file => file.endsWith('.zip'));
-
-            for (const zipFile of zipFiles) {
-              const filePath = path.join(artifactsDir, zipFile);
-              const fileStats = fs.statSync(filePath);
-              const fileSize = fileStats.size;
-              const fileStream = fs.createReadStream(filePath);
-
-              console.log(`Uploading ${zipFile} (${fileSize} bytes) to release ${releaseId}`);
-
-              await github.rest.repos.uploadReleaseAsset({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                release_id: releaseId,
-                name: zipFile,
-                data: fileStream,
-                headers: {
-                  'content-type': 'application/zip',
-                  'content-length': fileSize
-                }
-              });
-            }
-
+            // 设置输出变量
+            core.setOutput('release_id', release.data.id);
+            core.setOutput('upload_url', release.data.upload_url.replace(/\{.*$/, ''));
+            
+            console.log(`Release ID: ${release.data.id}`);
+            console.log(`Upload URL: ${release.data.upload_url.replace(/\{.*$/, '')}`);
           } catch (error) {
-            core.setFailed(`Failed to get release or upload assets: ${error.message}`);
+            core.setFailed(`Failed to get release: ${error.message}`);
           }
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Assets
+      run: |
+        # 检查上传URL是否有效
+        if [ -z '${steps.get_release.outputs.upload_url}' ]; then
+          echo "Error: Upload URL is empty!"
+          exit 1
+        fi
+
+        for file in artifacts/*.zip; do
+          [ -e "$file" ] || continue
+          filename=$(basename "$file")
+          echo 'Uploading $filename to release ${steps.get_release.outputs.upload_url}'
+          
+          # 显示完整URL用于调试
+          full_url='${steps.get_release.outputs.upload_url}?name=$filename'
+          echo "Full URL: $full_url"
+          
+          # 上传文件
+          curl -X POST \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/zip" \
+            --data-binary @"$file" \
+            "$full_url"
+        done
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
