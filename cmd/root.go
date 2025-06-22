@@ -3,6 +3,8 @@ package cmd
 import (
 	"os"
 
+	"moeCounter/cmd/flags"
+
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +25,7 @@ func Execute() {
 
 func init() {
 	// 在这里添加子命令或标志
-	serveCmd.Flags().IntVarP(&port, "port", "p", 8088, "服务监听端口")
-	serveCmd.Flags().StringVarP(&dbFile, "db", "d", "data.db", "数据库文件路径")
-	serveCmd.Flags().BoolVar(&debug, "debug", false, "是否开启调试模式")
+	rootCmd.PersistentFlags().IntVarP(&flags.Port, "port", "p", 8088, "服务监听端口")
+	rootCmd.Flags().StringVarP(&flags.DbFile, "db", "d", "data.db", "数据库文件路径")
+	rootCmd.Flags().BoolVar(&flags.Debug, "debug", false, "是否开启调试模式")
 }
