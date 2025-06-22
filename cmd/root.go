@@ -26,6 +26,6 @@ func Execute() {
 func init() {
 	// 在这里添加子命令或标志
 	rootCmd.PersistentFlags().IntVarP(&flags.Port, "port", "p", 8088, "服务监听端口")
-	rootCmd.Flags().StringVarP(&flags.DbFile, "db", "d", "data.db", "数据库文件路径")
-	rootCmd.Flags().BoolVar(&flags.Debug, "debug", false, "是否开启调试模式")
+	rootCmd.PersistentFlags().StringVarP(&flags.DbFile, "db", "d", "data.db", "数据库文件路径")
+	rootCmd.PersistentFlags().BoolVar(&flags.Debug, "debug", false, "是否开启调试模式")
 }
