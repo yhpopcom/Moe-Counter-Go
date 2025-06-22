@@ -23,8 +23,5 @@ var serveCmd = &cobra.Command{
 }
 
 func init() {
-	serveCmd.Flags().IntVarP(&port, "port", "p", 8088, "服务监听端口")
-	serveCmd.Flags().StringVarP(&dbFile, "db", "d", "data.db", "数据库文件路径")
-	serveCmd.Flags().BoolVar(&debug, "debug", false, "是否开启调试模式")
 	rootCmd.AddCommand(serveCmd)
 }
