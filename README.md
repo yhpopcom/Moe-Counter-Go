@@ -59,7 +59,7 @@
 ### 前置要求
 - Go 1.16+
 
-### 运行命令
+### 编译运行命令
 ```bash
 # 编译项目
 go build -o moeCounter
@@ -69,6 +69,11 @@ go build -o moeCounter
 
 # 自定义参数
 ./moeCounter start -p 8080 -d custom.db
+
+# 注意：不建议直接在终端直接运行
+# 1Panel：创建守护进程
+# 宝塔面板：Go项目 / 进程守护管理器
+# 其他：使用nohup命令或者手动创建服务
 ```
 
 ### 命令行参数
@@ -150,6 +155,9 @@ GOOS=linux GOARCH=amd64 go build -trimpath --ldflags="-s -w" -o moeCounter
 
 # 编译windows可执行文件
 GOOS=windows GOARCH=amd64 go build -trimpath --ldflags="-s -w" -o moeCounter.exe
+
+# 编译macos可执行文件
+GOOS=darwin GOARCH=arm64 go build -trimpath --ldflags="-s -w" -o moeCounter
 ```
 
 ## GitHub Actions自动发布
