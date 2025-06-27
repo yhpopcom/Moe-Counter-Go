@@ -32,7 +32,7 @@ jobs:
 
     - name: Build
       run: |
-        OUTPUT="moeCounter-linux-${{ matrix.suffix }}"
+        OUTPUT="moeCounter"
         if [ -n "${{ matrix.goarm }}" ]; then
           export GOARM=${{ matrix.goarm }}
         fi
@@ -63,7 +63,7 @@ jobs:
 
     - name: Build
       run: |
-        OUTPUT="moeCounter-macos-${{ matrix.arch }}"
+        OUTPUT="moeCounter"
         GOOS=darwin GOARCH=${{ matrix.arch }} go build -o $OUTPUT ./main.go
         mv $OUTPUT macos-${{ matrix.arch }}
       continue-on-error: true
@@ -91,8 +91,9 @@ jobs:
 
     - name: Build
       run: |
-        $output = "windows-${{ matrix.arch }}.exe"
+        $output = "moeCounter.exe"
         go build -o $output ./main.go
+        Rename-Item -Path $output -NewName "windows-${{ matrix.arch }}.exe"
       continue-on-error: true
 
     - name: Upload Artifact
@@ -125,16 +126,30 @@ jobs:
               echo "Processing directory: $item"
               pushd "$item" > /dev/null
               for file in *; do
-                echo "Compressing: $file into ../${item}.zip"
-                zip -j "../${item}.zip" "$file"
+                # 重命名文件为moeCounter（Windows平台保留.exe后缀）
+                if [[ "$file" == *".exe" ]]; then
+                  mv "$file" "moeCounter.exe"
+                  echo "Compressing: moeCounter.exe into ../${item}.zip"
+                  zip -j "../${item}.zip" "moeCounter.exe"
+                else
+                  mv "$file" "moeCounter"
+                  echo "Compressing: moeCounter into ../${item}.zip"
+                  zip -j "../${item}.zip" "moeCounter"
+                fi
               done
               popd > /dev/null
               rm -rf "$item"
             elif [ -f "$item" ]; then
               echo "Processing file: $item"
-              # 直接压缩文件
+              # 直接压缩文件，保持压缩包名称不变
               filename=$(basename "$item")
-              zip "${filename%.*}.zip" "$item"
+              if [[ "$filename" == *".exe" ]]; then
+                cp "$item" "moeCounter.exe"
+                zip "${filename%.*}.zip" "moeCounter.exe"
+              else
+                cp "$item" "moeCounter"
+                zip "${filename%.*}.zip" "moeCounter"
+              fi
               rm -f "$item"
             fi
           done
