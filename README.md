@@ -14,11 +14,8 @@
 ├── cmd/               # 命令行入口
 │   ├── root.go        # 根命令
 │   └── start.go       # 启动命令
-├── internal/          # 内部包
-│   ├── database/      # 数据库模块
-│   │   └── sqlite3.go
-│   └── utils/         # 工具函数
-│       └── combine.go
+├── database/          # 数据库模块
+│   └── sqlite3.go     # SQLite数据库操作
 ├── public/            # 前端资源
 │   ├── assets/        # 静态资源
 │   │   └── theme/     # 主题资源目录
@@ -30,6 +27,8 @@
 │   │   ├── counter.go # 计数器逻辑
 │   │   └── theme.go   # 主题逻辑
 │   └── router.go      # 路由定义
+├── utils/             # 工具函数
+│   └── combine.go     # 合并工具函数
 ├── go.mod             # Go模块定义
 ├── go.sum             # 依赖校验
 └── main.go            # 程序入口

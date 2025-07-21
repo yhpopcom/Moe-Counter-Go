@@ -2,7 +2,7 @@ package server
 
 import (
 	"embed"
-	"moeCounter/internal/database"
+	"moeCounter/database"
 
 	"github.com/gin-gonic/gin"
 )

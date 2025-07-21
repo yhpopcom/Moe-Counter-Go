@@ -2,9 +2,9 @@ package controller
 
 import (
 	"math/rand"
-	"moeCounter/internal/database"
-	"moeCounter/internal/utils"
+	"moeCounter/database"
 	"moeCounter/public"
+	"moeCounter/utils"
 	"net/http"
 	"strconv"
 	"time"
