@@ -27,5 +27,7 @@ EXPOSE 8088
 ENV DB_PATH=/data/data.db \
     PORT=8088
 
+ENV GIN_MODE=release
+
 # 使用 start 参数启动
 CMD ["./moe-counter", "start", "--db", "/data/data.db", "--port", "8088"]
