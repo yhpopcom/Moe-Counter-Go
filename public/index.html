@@ -249,7 +249,7 @@
         // 更新示例图片
         function updateExampleImage() {
             const exampleImg = document.getElementById('example_img');
-            exampleImg.src = `${config.site}/api/counter?name=index&theme=gelbooru`;
+            exampleImg.src = `${config.site}/api/counter?name=index&theme=rule34`;
             
             const svgUrl = document.getElementById('svg_url');
             svgUrl.textContent = `${config.site}/api/counter?name=:name`;
@@ -258,7 +258,7 @@
             imgUrl.textContent = `<img src="${config.site}/api/counter?name=:name" alt=":name" />`;
             
             const themeUrl = document.getElementById('theme_url');
-            themeUrl.textContent = `${config.site}/api/counter?name=:name&theme=moebooru`;
+            themeUrl.textContent = `${config.site}/api/counter?name=:name&theme=rule34`;
         }
 
         // 生成预览
