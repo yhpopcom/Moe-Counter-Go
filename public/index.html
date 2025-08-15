@@ -51,7 +51,7 @@
     </style>
 </head>
 <body>
-    <h1 id="main_title"><i>萌萌计数器！</i></h1>
+    <h1 id="main_title"><i>萌计数器！</i></h1>
 
     <h3>使用说明</h3>
     <p>为您的计数器设置唯一ID，替换URL中的 <code>:name</code> 即可！</p>
@@ -61,15 +61,21 @@
 
     <h5>图片标签</h5>
     <code id="img_url">&lt;img src="/api/counter?name=:name" alt=":name" /&gt;</code>
+    
+     <h5>Markdown</h5>
+    <code id="img_url">&lt;![:name](="/api/counter?name=:name" alt=":name") /&gt;</code>
+    
+    <h5>BBCode</h5>
+    <code id="img_url">&lt;[img]"/api/counter?name=:name" alt=":name"[/img] /&gt;</code>
 
     <h5>示例：</h5>
-    <img id="example_img" src="/api/counter?name=index&theme=gelbooru" alt="萌萌计数器！">
+    <img id="example_img" src="/api/counter?name=index&theme=rule34" alt="萌萌计数器！">
 
     <details id="themes">
         <summary id="more_theme">
             <h3>更多主题 ✨</h3>
         </summary>
-        <p>使用查询参数 <code>theme</code>，例如：<code id="theme_url">/api/counter?name=:name&theme=moebooru</code></p>
+        <p>使用查询参数 <code>theme</code>，例如：<code id="theme_url">/api/counter?name=:name&theme=3d-num</code></p>
         <div id="theme_list"></div>
     </details>
 
