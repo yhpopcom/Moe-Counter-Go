@@ -55,6 +55,8 @@
 
     <h3>使用说明</h3>
     <p>为您的计数器设置唯一ID，替换URL中的 <code>:name</code> 即可！</p>
+    <p>默认为随机主题，增加&theme=moebooru("moebooru"为指定主题)</p>
+    <p>列如：https://127.0.0.1/api/counter?name=1234&theme=moebooru</p>
 
     <h5>SVG地址</h5>
     <code id="svg_url">/api/counter?name=:name</code>
@@ -69,7 +71,7 @@
     <code id="svg_url">[img]/api/counter?name=:name[/img]</code>
 
     <h5>示例：</h5>
-    <img id="example_img" src="/api/counter?name=index&theme=rule34" alt="萌萌计数器！">
+    <img id="example_img" src="/api/counter?name=index&theme=rule34" alt="萌计数器！">
 
     <details id="themes">
         <summary id="more_theme">
@@ -258,7 +260,7 @@
             imgUrl.textContent = `<img src="${config.site}/api/counter?name=:name" alt=":name" />`;
             
             const themeUrl = document.getElementById('theme_url');
-            themeUrl.textContent = `${config.site}/api/counter?name=:name&theme=rule34`;
+            themeUrl.textContent = `${config.site}/api/counter?name=:name&theme=moebooru`;
         }
 
         // 生成预览
